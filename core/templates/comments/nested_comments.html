@@ -1,0 +1,33 @@
+<div class="ml-10 border-l mb-2 p-2 border-gray-300" id = "{{comment.id}}">
+  <div class="mb-4">
+    <p class="font-semibold">{{comment.user}}</p>
+    <p class="text-gray-600">{{comment.text}}</p>
+    {% if not reply_form_visible %}
+      <button class="text-blue-500 reply-button" data-reply-button="replyBtn-{{comment.id}}" onclick="toggleReplyForm({{comment.id}})">Reply</button>
+    {% endif %}
+    <button class="text-gray-500 cancel-button{% if not reply_form_visible %} hidden{% endif %}" data-cancel-button="cancelBtn-{{comment.id}}" onclick="cancelReply({{comment.id}})">Cancel</button>
+  </div>
+  
+  <!-- Comment and Reply Buttons -->
+  
+
+  <!-- Reply Input Field -->
+  <form class="mt-2 hidden" id = "reply-form-{{comment.id}}" method="POST" action="/reply">
+    {% csrf_token %}
+    <div class="flex space-x-4">
+      <input type="hidden" name="post" value="{{post.id}}"/>
+      <input type="hidden" name="parent" value="{{comment.id}}"/>
+      {{reply_form.text}}
+      <button type="submit" class="px-6 py-2 bg-blue-500 text-white rounded">Reply</button>
+    </div>
+  </form>
+  <!-- End Reply Input Field -->
+
+  <!-- Nested Comments -->
+  <!-- Add nested comments here if needed -->
+
+  <!-- End Nested Comments -->
+  {%for comment in comment.get_child_comments%}
+    {% include 'comments/nested_comments.html' with comments=comment %}
+  {%endfor%}
+</div>
